@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MoviesPortal.Models.Director>
+﻿@model PaginatedList<MoviesPortal.Models.Director>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,12 +9,24 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]"/>
+                          <button class="btn btn-info">Search</button>
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
             </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -33,3 +45,23 @@
 }
     </tbody>
 </table>
+
+@{ 
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex-1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-info @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex+1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-info @nextDisabled">
+    Next
+</a>

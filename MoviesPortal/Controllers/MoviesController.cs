@@ -20,10 +20,45 @@ namespace MoviesPortal.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? pageNumber)
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var movies = from m in _context.Movie
+                         select m;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(m => m.Title.Contains(searchString)
+                                       || m.Director.Name.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    movies = movies.OrderByDescending(m => m.Title);
+                    break;
+                default:
+                    movies = movies.OrderBy(m => m.Title);
+                    break;
+            }
+            int pageSize = 3;
             var applicationDbContext = _context.Movie.Include(m => m.Director);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await PaginatedList<Movie>.CreateAsync(movies.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Movies/Details/5

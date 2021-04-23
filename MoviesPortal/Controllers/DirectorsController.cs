@@ -20,9 +20,39 @@ namespace MoviesPortal.Controllers
         }
 
         // GET: Directors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            return View(await _context.Director.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+
+            if(searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            var directors = from d in _context.Director
+                            select d;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                directors = directors.Where(d => d.Name.Contains(searchString));
+            }
+            switch(sortOrder)
+            {
+                case "name_desc":
+                    directors = directors.OrderByDescending(d => d.Name);
+                    break;
+                default:
+                    directors = directors.OrderBy(d => d.Name);
+                    break;
+            }
+            int pageSize = 3;
+
+            return View(await PaginatedList<Director>.CreateAsync(directors.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Directors/Details/5
