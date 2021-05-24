@@ -1,0 +1,14 @@
+﻿@model MoviesPortal.ViewModels.AddMovieGenreViewModel
+@{
+}
+
+<form asp-controller="Movies" asp-action="AddGenre" method="post">
+    <div class="form-group">
+        <label asp-for="GenreId"></label>
+        <select class="form-control w-25" asp-for="GenreId" asp-items="Model.Genres"></select>
+    </div>
+
+    <input asp-for="MovieId" class="form-control" type="hidden" name="MovieId" value="@Model.Movie.Id" />
+
+    <input type="submit" class="btn btn-info" value="Add Genre" />
+</form>

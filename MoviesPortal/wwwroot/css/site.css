@@ -9,7 +9,8 @@ a.navbar-brand {
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+  color: white!important;
+  text-decoration: none;
 }
 
 .btn-primary {
@@ -59,8 +60,10 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    background-color: #282c34;
+    min-height: 100vh;
+    color: white;
+    font-family: 'Raleway', sans-serif;
 }
 .footer {
   position: absolute;

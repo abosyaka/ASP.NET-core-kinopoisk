@@ -19,7 +19,7 @@
         </p>
     </div>
 </form>
-<table class="table">
+<table class="table text-white">
     <thead>
         <tr>
             <th>
@@ -34,7 +34,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="text-white">
         @foreach (var item in Model)
         {
             <tr>
@@ -45,7 +45,7 @@
                     @Html.DisplayFor(modelItem => item.Poster)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Director.Id)
+                    @Html.DisplayFor(modelItem => item.Director.Name)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -1,0 +1,25 @@
+﻿@model MoviesPortal.Models.Movie
+@{
+}
+
+<div class="col-12 cardcont p-0">
+    <div class="poster-container p-0">
+        <img src="@Model.Poster" alt="ava" class="poster"/>
+    </div>
+    <div class="meta-data-container col-12 col-md-8 d-flex flex-column">
+        <h1 class="font-weight-bold mt-4">@Model.Title</h1>
+        <span class="tagline mb-2">What a lovely day</span>
+        <p>@Model.MovieDetail.Description</p>
+        <span ></span>
+        <div class="row mt-2">
+            <div class="col-6">
+                <span class="meta-data-title">Box-Office:</span>
+                <span class="meta-data">@Model.MovieDetail.BoxOffice</span>
+            </div>
+            <div class="col-6">
+                <span class="meta-data-title">Director:</span>
+                <span class="meta-data">@Model.Director.Name</span>
+            </div>
+        </div>
+    </div>
+</div>

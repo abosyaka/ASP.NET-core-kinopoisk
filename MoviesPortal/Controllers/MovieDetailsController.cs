@@ -48,7 +48,7 @@ namespace MoviesPortal.Controllers
         // GET: MovieDetails/Create
         public IActionResult Create()
         {
-            ViewData["MovieId"] = new SelectList(_context.Set<Movie>(), "Id", "Id");
+            ViewData["MovieId"] = new SelectList(_context.Set<Movie>(), "Id", "Title");
             return View();
         }
 
@@ -82,7 +82,7 @@ namespace MoviesPortal.Controllers
             {
                 return NotFound();
             }
-            ViewData["MovieId"] = new SelectList(_context.Set<Movie>(), "Id", "Id", movieDetail.MovieId);
+            ViewData["MovieId"] = new SelectList(_context.Set<Movie>(), "Id", "Title", movieDetail.MovieId);
             return View(movieDetail);
         }
 

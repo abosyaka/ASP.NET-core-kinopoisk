@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviesPortal.Data;
 using MoviesPortal.Models;
+using MoviesPortal.ViewModels;
 
 namespace MoviesPortal.Controllers
 {
@@ -39,7 +40,7 @@ namespace MoviesPortal.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            var movies = from m in _context.Movie
+            var movies = from m in _context.Movie.Include(m => m.Director)
                          select m;
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -72,6 +73,7 @@ namespace MoviesPortal.Controllers
             var movie = await _context.Movie
                 .Include(m => m.Director)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (movie == null)
             {
                 return NotFound();
@@ -83,7 +85,7 @@ namespace MoviesPortal.Controllers
         // GET: Movies/Create
         public IActionResult Create()
         {
-            ViewData["DirectorId"] = new SelectList(_context.Director, "Id", "Id");
+            ViewData["DirectorId"] = new SelectList(_context.Director, "Id", "Name");
             return View();
         }
 
@@ -112,12 +114,13 @@ namespace MoviesPortal.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FindAsync(id);
+            //var movie = await _context.Movie.FindAsync(id);
+            var movie = await _context.Movie.Include(m => m.Genres).FirstAsync(m => m.Id == id);
             if (movie == null)
             {
                 return NotFound();
             }
-            ViewData["DirectorId"] = new SelectList(_context.Director, "Id", "Id", movie.DirectorId);
+            ViewData["DirectorId"] = new SelectList(_context.Director, "Id", "Name", movie.DirectorId);
             return View(movie);
         }
 
@@ -190,6 +193,31 @@ namespace MoviesPortal.Controllers
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);
+        }
+
+        public IActionResult AddGenre(int? id)
+        {
+            if (id == null) return NotFound();
+            var movie = _context.Movie.Include(m => m.Genres).Single(m => m.Id == id);
+            List<Genre> genres = _context.Genre.ToList();
+            genres.RemoveAll(g => movie.Genres.Contains(g));
+            AddMovieGenreViewModel movieGenreViewModel = new AddMovieGenreViewModel(movie, genres);
+            return View(movieGenreViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult AddGenre(int MovieId, int GenreId)
+        {
+            if (ModelState.IsValid)
+            {
+                var movie = _context.Movie.Single(m => m.Id == MovieId);
+                movie.Genres = new List<Genre>();
+                movie.Genres.Add(_context.Genre.Single(g => g.Id == GenreId));
+                _context.Update(movie);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Edit", "Movies");
         }
     }
 }
